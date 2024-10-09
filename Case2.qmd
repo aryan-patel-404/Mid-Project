@@ -1,0 +1,134 @@
+---
+title: "Crimes in London"
+---
+
+For this case Let's Consider the below data Visualization of "Categories of Crime in London boroughs"
+
+![](London Crimes.png)
+
+Source : https://sharkcoder.com/data-visualization/mpl-pie-charts
+
+Donut charts depicting the distribution of crimes in nine London boroughs—Barnet, Bexley, Brent, Bromley, Camden, City of London, and Croydon—are displayed in the image. With colors indicated in the legend, each chart is divided into seven crime categories: robbery, theft and handling, drugs, burglary, criminal damage, robbery, and violence against the person. Theft and Handling and Violence Against the Person are the most noticeable categories in many boroughs; they are shown in red and light red, respectively. There is a noticeable difference in crime rates between the City of London and boroughs such as Barnet, Brent, and Croydon. Notable parts for burglary and criminal damage are also displayed in some regions, such as Bexley and Bromley.
+
+By this we can produce better graphics or redesigning of the above data in Line plot and Heat Map.
+
+Loading Libraries
+
+```{r}
+library(lattice)
+library(tidyverse)
+```
+
+Enter the data:
+
+```{r}
+Barking_and_Dagenham <- c(1694, 7160, 5732, 1846, 3696, 2060, 1324)
+Barnet <- c( 3052, 13396, 10492, 3511, 6925, 3660, 2465)
+Bexley <- c(1956, 8787, 7170, 2439, 4731, 2534, 1614)
+Brent <- c(2667, 10865, 9014, 2882, 5655, 3642, 2249)
+Bromley <- c(2770, 12289, 9646, 3347, 6454, 3225, 2251)
+Camden <- c(2152, 8676, 6705, 2303, 4370, 2652, 1794)
+City_of_London <- c(50, 254, 214, 48, 85, 69, 34)
+Croydon <- c(3394, 13695, 11127, 3561, 7270, 4143, 2328)
+
+cities <- cbind(Barking_and_Dagenham, Barnet, Bexley, Brent, Bromley, Camden, City_of_London, Croydon)
+cities
+```
+
+Add row and coloumn labels:
+
+```{r}
+crime <- c( "Robbery", "Theft and Handling",
+           "Violence against person", "Burglary", "Criminal Damage", "Drugs", "Other Offences")
+city <- c("Barking_and_Dagenham", "Barnet", "Bexley", "Brent", "Bromley", "Camden", "City_of_London", "Croydon")
+
+colnames(cities) <- city
+rownames(cities) <- crime
+cities
+```
+
+It is now in matrix form where Coloumns are City Names and Rows are Type of Crimes.
+
+Arranging data in descending Order by taking mean.
+
+```{r}
+typeMeans <- rowMeans(cities)
+(typeOrd <- order(-typeMeans))
+cbind(cities,typeMeans)[typeOrd,]
+
+```
+
+Converting Matrix into dataframe;
+```{r}
+London_crimes <- as.data.frame(cities) 
+London_crimes
+```
+
+Adding new Coloumns of rownames;
+```{r}
+types = rownames(London_crimes)
+London_crimes$Types = factor(types, ordered = T, levels = rev(types) )
+London_crimes
+rownames(London_crimes) = NULL
+London_crimes
+```
+
+Now make an indexed data.frame that stacks the race column values
+```{r}
+London_crimesType <- gather(London_crimes, key = city, value = count,Barking_and_Dagenham:Croydon,
+                      factor_key = T)
+London_crimesType
+```
+
+## Line Plot
+Using lattice package, Let's plot above data:
+
+```{r}
+ggplot(London_crimesType, aes(x= count,y=Types,fill = city,group = city)) +
+  geom_point(shape = 21, size = 2.8) + 
+  geom_line(aes(color = city)) +
+  labs(x = "Count",y="",title = "Categories of Crime in London boroughs")+
+  facet_wrap(~city)+ scale_x_continuous(breaks=seq(0,14000,by=1000))
+```
+
+The above data is represented in the form of Line Graph
+
+![](Plot1.png)
+
+
+# Comapring the Line plot to Donut Charts
+The Line plot provides a detailed view of crime categories across London boroughs, illustrating crime counts with distinct points and connecting lines. This style makes it simple to compare patterns and trends, making it possible for users to recognize outliers and discover changes. A pie chart, on the other hand, usually displays the proportions of various sorts of crimes for a single borough, which limits its usefulness for comparative study across several categories.
+
+A Donut chart can seem complex when there are many categories, but a line plot can clearly handle a large number of data points. donut charts are static, thus they are not very good at depicting trends over time, which is another area where line plots shine. Overall, pie charts work better for showing basic proportions within a particular context, whereas line plots are better suited for in-depth quantitative analysis and cross-borough comparisons.
+
+
+## Heat Map
+
+Creating Heat map
+```{r}
+ggplot(London_crimesType, aes(x = city, y = Types, fill = count)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "yellow", high = "red") + 
+  labs(x = "London Boroughs", y = "Crime Types", title = "Crime Categories Across London Boroughs") +
+  theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+The above graph represents the given data in Heat Map form.
+
+# Comapring the Heat Map to Donut Charts
+
+The donut charts help viewers understand the precise composition of crimes in diverse locations by efficiently illustrating the proportional distribution of different crime kinds within each borough. The segmented nature of the charts makes it difficult to compare the overall crime rates of several boroughs, even while they help to clearly grasp the various crime categories for individual boroughs.
+
+On the other hand, a heat map uses color gradients to give a broad picture of crime intensity; higher crime rates are shown by deeper hues. This makes it possible to compare boroughs visually quickly, which facilitates the process of quickly determining which areas have higher crime rates.
+
+# Conclusion
+
+
+The three graphs provide different levels of insight into crimes in London. Donut charts are effective for displaying the overall different crime categories within a single borough. However, because of their segmented design, which can cause clutter and make it challenging to combine information, they become less useful when comparing various boroughs. 
+
+Line graphs, on the other hand, excel at depicting trends over time, making them excellent for assessing crime rates in specific categories. On the other hand, heat maps provide a thorough picture of the amount of crime in several boroughs by employing color gradients to show different crime rates, with darker hues denoting higher crime rates.
+
+# Reference
+
+[1] Shark Coder,"Matplotlib Pie Charts",Availale: https://sharkcoder.com/data-visualization/mpl-pie-charts. [Accessed: October 5,2024].
+[2] STAT 515, "Redesigning Examples", Dr. Isuru Dassanayake, Available: https://canvas.gmu.edu/courses/25180/files/folder/Module%204?. [Accessed: October5,2024]

@@ -1,0 +1,7 @@
+---
+title: "Video"
+---
+
+The below video discuss about our STAT 515 Mid Project:
+
+{{<video https://youtu.be/1z9G2unm9kk >}}

@@ -1,0 +1,38 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  back-to-top-navigation: true
+  navbar:
+    left:
+      - href: Home.qmd
+        text: Home
+      - text: Redesign 1
+        href: about.qmd
+      - text: Redesign 2
+        href: Case2.qmd
+      - text: Codes
+        href: Codes.qmd
+      - text: Video
+        href: video.qmd 
+      - href: index.qmd
+        text: About Us
+        
+    tools:
+      - icon: github
+        menu:
+          - text: Aryan Profile
+            href: https://github.com/aryan-patel-404
+          - text: Rithvik Profile
+            href: https://github.com/Rithvikmadhavaram
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+editor: visual
+
+
